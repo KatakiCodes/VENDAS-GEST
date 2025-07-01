@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Domain.Entities;
 using Domain.Enums;
-using Domain.Validators;
-using FluentValidation.Results;
 
 namespace Vendas_Gest.Tests.Entities.Tests
 {
@@ -12,25 +9,23 @@ namespace Vendas_Gest.Tests.Entities.Tests
     {
         private readonly User Invalid_User;
         private readonly User Valid_User;
-        private UserValidator Validator;
         public UserTests()
         {
             Valid_User = new User("Nelson Dos Santos", "123456", EUserRole.Administrator, true);
             Invalid_User = new User("", "12345", EUserRole.Administrator, true);
-            Validator = new UserValidator();
         }
 
         [TestMethod]
         public void Dados_um_utilizador_invalido_o_mesmo_deve_retornar_em_erro()
         {
-            var validationResult = Validator.Validate(Invalid_User);
+            var validationResult = Invalid_User.Validate();
             Assert.AreEqual(false, validationResult.IsValid);
         }
 
         [TestMethod]
         public void Dados_um_utilizador_valido_o_mesmo_deve_ser_criado_com_sucesso()
         {
-            var validationResult = Validator.Validate(Valid_User);
+            var validationResult = Valid_User.Validate();
             Assert.AreEqual(true, validationResult.IsValid);
         }
 
