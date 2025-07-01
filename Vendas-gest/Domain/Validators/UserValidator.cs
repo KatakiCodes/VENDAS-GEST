@@ -12,8 +12,12 @@ namespace Domain.Validators
     {
         public UserValidator()
         {
-            RuleFor(user => user.Name).NotEmpty().NotNull().MinimumLength(3);
-            RuleFor(user => user.Password).NotEmpty().NotNull().MinimumLength(6);
+            RuleFor(user => user.Name)
+                .NotEmpty().WithMessage("O nome do utilizador não pode ser vazio!")
+                .NotNull().WithMessage("O nome do utilizador não pode ser nulo!");
+            RuleFor(user => user.Password)
+                .NotEmpty().WithMessage("A palavra-passe do utilizador não pode ser vazio!")
+                .NotNull().WithMessage("A palavra-passe do utilizador não pode ser nula!");
         }
     }
 }
