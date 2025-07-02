@@ -1,10 +1,11 @@
-﻿using Domain.Interfaces.Validators;
+﻿
 using Domain.Validators;
-using FluentValidation.Results;
+using Flunt.Notifications;
+using Flunt.Validations;
 
 namespace Domain.Entities
 {
-    public class Product : Entity, IValidateble
+    public class Product : Entity, IValidatable
     {
         public Product(string name, string description, decimal price, bool enabled)
         {
@@ -13,7 +14,7 @@ namespace Domain.Entities
             Price = price;
             StockQuantity = 0;
             Enabled = enabled;
-            _ProductValidator = new ProductValidator();
+            _productValidator = new ProductValidator(this);
         }
 
         public string Name { get; private set; }
@@ -21,17 +22,22 @@ namespace Domain.Entities
         public decimal Price { get; private set; }
         public int StockQuantity { get; private set; }
         public bool Enabled { get; private set; }
-        private readonly ProductValidator _ProductValidator;
+
+        private readonly ProductValidator _productValidator;
 
         public void AddStockQuantity(int value)
         {
-            if (value > 0)
+            if (value <= 0)
+                this.AddNotification(new Notification($"{value}", "Quantidade inválida"));
+            else
                 StockQuantity += value;
         }
 
         public void SubtractStockQuantity(int value)
         {
-            if (value <= StockQuantity)
+            if (value > StockQuantity)
+                this.AddNotification(new Notification($"{value}", "Quantidade inválida"));
+            else
                 StockQuantity -= value;
         }
 
@@ -45,9 +51,10 @@ namespace Domain.Entities
             Enabled = false;
         }
 
-        public ValidationResult Validate()
+        public void Validate()
         {
-            return _ProductValidator.Validate(this);
+            _productValidator.Validate();
         }
+
     }
 }

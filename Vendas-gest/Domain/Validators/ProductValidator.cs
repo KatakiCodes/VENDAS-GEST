@@ -1,25 +1,23 @@
 ﻿using Domain.Entities;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Flunt.Validations;
 
 namespace Domain.Validators
 {
-    class ProductValidator : AbstractValidator<Product>
+    class ProductValidator : IValidatable
     {
-        public ProductValidator()
+        private readonly Product _product;
+
+        public ProductValidator(Product product)
         {
-            RuleFor(product => product.Name)
-                .NotEmpty().WithMessage("O nome do produto não deve ser vazio!")
-                .NotNull().WithMessage("O nome do produto não pode ser nulo!");
-            RuleFor(product => product.Description)
-                .NotEmpty().WithMessage("A descrição do produto não pode ser vazio!")
-                .NotNull().WithMessage("A descrição do produto não pode ser nula!");
-            RuleFor(Product => Product.Price).GreaterThan(0).WithMessage("O preço do produto deve ser maior que zero!")
-                .NotNull().WithMessage("O preço do produto não pode ser nulo!");
+            this._product = product;
+        }
+
+        public void Validate()
+        {
+            _product.AddNotifications(new Contract().Requires()
+                .IsNotNull(_product.Name, "Name", "Nome inválido!")
+                .IsNotNull(_product.Description, "Description", "Descrição inválida!")
+                .IsGreaterThan(_product.Price, 0, "Price", "Preço inválido"));
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using Domain.Enums;
-using Domain.Interfaces.Validators;
 using Domain.Validators;
-using FluentValidation.Results;
+using Flunt.Validations;
 
 namespace Domain.Entities
 {
-    public class User : Entity, IValidateble
+    public class User : Entity, IValidatable
     {
         public User(string name, string password, EUserRole role, bool enabled)
         {
@@ -13,14 +12,15 @@ namespace Domain.Entities
             Password = password;
             Role = role;
             Enabled = enabled;
-            _UserValidator = new UserValidator();
+            _userValidator = new UserValidator(this);
         }
 
         public string Name { get; private set; }
         public string Password { get; private set; }
         public EUserRole Role { get; private set; }
         public bool Enabled { get; private set; }
-        private readonly UserValidator _UserValidator;
+
+        private readonly UserValidator _userValidator;
 
         public void Enable()
         {
@@ -30,9 +30,9 @@ namespace Domain.Entities
         {
             this.Enabled = false;
         }
-        public ValidationResult Validate()
+        public void Validate()
         {
-            return _UserValidator.Validate(this);
+            _userValidator.Validate();
         }
     }
 }
