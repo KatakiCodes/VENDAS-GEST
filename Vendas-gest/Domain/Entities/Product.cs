@@ -1,4 +1,4 @@
-﻿using Domain.Contracts;
+﻿using Domain.Interfaces.Validators;
 using Domain.Validators;
 using FluentValidation.Results;
 
