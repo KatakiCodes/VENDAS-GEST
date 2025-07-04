@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Repositories
+namespace Domain.Interfaces.Repositories
 {
-    interface IProductRepository
+    interface IProductRepository : IGenericRepository<Product>
     {
         IEnumerable<Product> GetAll(Product user);
-        User GetById(Product product, Guid id);
-        void Create(Product product);
-        void Update(Product product);
     }
 }
