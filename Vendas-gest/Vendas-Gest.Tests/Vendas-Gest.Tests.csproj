@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities.Tests\ProductTests.cs" />
+    <Compile Include="Entities.Tests\SaleItemTests.cs" />
     <Compile Include="Entities.Tests\UserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
