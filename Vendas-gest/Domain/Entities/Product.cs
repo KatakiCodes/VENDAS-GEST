@@ -25,20 +25,22 @@ namespace Domain.Entities
 
         private readonly ProductValidator _productValidator;
 
-        public void AddStockQuantity(int value)
+        public void AddStockQuantity(int quantity)
         {
-            if (value <= 0)
-                this.AddNotification(new Notification($"{value}", "Quantidade inválida"));
+            if (quantity <= 0)
+                this.AddNotification(new Notification($"{quantity}", "Quantidade inválida"));
             else
-                StockQuantity += value;
+                StockQuantity += quantity;
         }
 
-        public void SubtractStockQuantity(int value)
+        public void SubtractStockQuantity(int quantity)
         {
-            if (value > StockQuantity)
-                this.AddNotification(new Notification($"{value}", "Quantidade inválida"));
+            if (quantity <= 0)
+                this.AddNotification(new Notification($"{quantity}", "Quantidade inválida!"));
+            else if (quantity > StockQuantity)
+                this.AddNotification(new Notification($"{quantity}", "Valor superior a quantidade em estoque!"));
             else
-                StockQuantity -= value;
+                StockQuantity -= quantity;
         }
 
         public void Enable()
