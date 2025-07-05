@@ -54,6 +54,7 @@ namespace Vendas_Gest.Tests.Entities.Tests
         {
             _validSaleItem.AddQuantity(3);
             Assert.AreEqual(3, _validSaleItem.Quantity);
+            Assert.AreEqual(3600, _validSaleItem.Total);
             Assert.AreEqual(7, _validSaleItem.Product.StockQuantity);
         }
         [TestMethod]
@@ -78,6 +79,7 @@ namespace Vendas_Gest.Tests.Entities.Tests
         {
             _validSaleItem.AddQuantity(6);
             _validSaleItem.SubtractQuantity(3);
+            Assert.AreEqual(3600, _validSaleItem.Total);
             Assert.AreEqual(3, _validSaleItem.Quantity);
             Assert.AreEqual(7, _validSaleItem.Product.StockQuantity);
         }

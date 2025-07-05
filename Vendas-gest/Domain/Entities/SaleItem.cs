@@ -12,12 +12,14 @@ namespace Domain.Entities
             Cart = cart;
             Product = product;
             Quantity = 0;
+            Total = 0;
             _saleItemValidator = new SaleItemValidator(this);
         }
 
         public Cart Cart { get; private set; }
         public Product Product { get; private set; }
         public int Quantity { get; private set; }
+        public decimal Total { get; private set; }
 
         private readonly SaleItemValidator _saleItemValidator;
 
@@ -27,7 +29,10 @@ namespace Domain.Entities
             if (Product.Valid is false)
                 this.AddNotifications(Product.Notifications);
             else
+            {
                 Quantity += quantity;
+                Total += (Product.Price * quantity);
+            }
         }
         public void SubtractQuantity(int quantity)
         {
@@ -39,6 +44,7 @@ namespace Domain.Entities
             {
                 Product.AddStockQuantity(quantity);
                 Quantity -= quantity;
+                Total -= (Product.Price * quantity);
             }
         }
 
