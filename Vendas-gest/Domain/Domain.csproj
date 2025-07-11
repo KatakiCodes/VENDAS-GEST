@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstraction\Repositories\ISaleRepository.cs" />
     <Compile Include="Entities\Cart.cs" />
     <Compile Include="Entities\Sale.cs" />
     <Compile Include="Entities\SaleItem.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Entities\Product.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Enums\ECartState.cs" />
+    <Compile Include="Enums\ESaleState.cs" />
     <Compile Include="Enums\EUserRole.cs" />
     <Compile Include="Abstraction\Repositories\ICartRepository.cs" />
     <Compile Include="Abstraction\Repositories\IGenericRepository.cs" />

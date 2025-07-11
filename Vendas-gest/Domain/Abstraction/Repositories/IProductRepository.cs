@@ -6,6 +6,6 @@ namespace Domain.Interfaces.Repositories
 {
     interface IProductRepository : IGenericRepository<Product>
     {
-        IEnumerable<Product> GetAll(Product user);
+        IEnumerable<Product> GetAll(User user);
     }
 }
