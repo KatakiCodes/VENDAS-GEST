@@ -1,26 +1,26 @@
-﻿using Domain.Contracts;
-using Domain.Enums;
-using Domain.Validators;
-using FluentValidation.Results;
+﻿using Domain.Enums;
+using Domain.Validation;
+using System;
 
 namespace Domain.Entities
 {
-    public class User : Entity, IValidateble
+    public class User : Entity
     {
         public User(string name, string password, EUserRole role, bool enabled)
         {
-            Name = name;
-            Password = password;
-            Role = role;
-            Enabled = enabled;
-            _UserValidator = new UserValidator();
+            ValidateDomain(name, password, role, enabled);
+        }
+        //Construtor para atualização
+        public User(Guid id, string name, string password, EUserRole role, bool enabled)
+        {
+            ValidateDomain(name, password, role, enabled);
+            Id = id;
         }
 
         public string Name { get; private set; }
         public string Password { get; private set; }
         public EUserRole Role { get; private set; }
         public bool Enabled { get; private set; }
-        private readonly UserValidator _UserValidator;
 
         public void Enable()
         {
@@ -30,9 +30,17 @@ namespace Domain.Entities
         {
             this.Enabled = false;
         }
-        public ValidationResult Validate()
+
+        public void ValidateDomain(string name, string password, EUserRole role, bool enabled)
         {
-            return _UserValidator.Validate(this);
+            DomainValidationExeption.When(string.IsNullOrEmpty(name), "O nome do utilizador não pode ser vazio ou nulo");
+            DomainValidationExeption.When((name.Length < 3), "O nome do utilizador deve possuir no mínimo 3 caractéres");
+            DomainValidationExeption.When(string.IsNullOrEmpty(password), "A palavra-passe do utilizador não pode ser vazia ou nula");
+            DomainValidationExeption.When(!Enum.IsDefined(typeof(EUserRole), role), "Informe uma função válida para o utilizador");
+            Name = name;
+            Password = password;
+            Role = role;
+            Enabled = enabled;
         }
     }
 }

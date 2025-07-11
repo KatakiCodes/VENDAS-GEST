@@ -1,19 +1,19 @@
-﻿using Domain.Contracts;
-using Domain.Validators;
-using FluentValidation.Results;
+﻿using Domain.Validation;
+using System;
 
 namespace Domain.Entities
 {
-    public class Product : Entity, IValidateble
+    public class Product : Entity
     {
         public Product(string name, string description, decimal price, bool enabled)
         {
-            Name = name;
-            Description = description;
-            Price = price;
-            StockQuantity = 0;
-            Enabled = enabled;
-            _ProductValidator = new ProductValidator();
+            ValidateDomain(name, description, price, enabled);
+        }
+        //Construto para atuaçização
+        public Product(Guid id, string name, string description, decimal price, bool enabled)
+        {
+            ValidateDomain(name, description, price, enabled);
+            Id = id;
         }
 
         public string Name { get; private set; }
@@ -21,18 +21,18 @@ namespace Domain.Entities
         public decimal Price { get; private set; }
         public int StockQuantity { get; private set; }
         public bool Enabled { get; private set; }
-        private readonly ProductValidator _ProductValidator;
 
-        public void AddStockQuantity(int value)
+        public void AddStockQuantity(int quantity)
         {
-            if (value > 0)
-                StockQuantity += value;
+            DomainValidationExeption.When((quantity <= 0), "Quantidade inválida");
+            StockQuantity += quantity;
         }
 
-        public void SubtractStockQuantity(int value)
+        public void SubtractStockQuantity(int quantity)
         {
-            if (value <= StockQuantity)
-                StockQuantity -= value;
+            DomainValidationExeption.When((quantity <= 0), "Quantidade inválida");
+            DomainValidationExeption.When((quantity > StockQuantity), "Quantidade superior a quantidade em estoque");
+            StockQuantity -= quantity;
         }
 
         public void Enable()
@@ -45,9 +45,16 @@ namespace Domain.Entities
             Enabled = false;
         }
 
-        public ValidationResult Validate()
+        public void ValidateDomain(string name, string description, decimal price, bool enabled)
         {
-            return _ProductValidator.Validate(this);
+            DomainValidationExeption.When(string.IsNullOrEmpty(name), "O nome do produto não pode ser vazio ou nulo");
+            DomainValidationExeption.When(string.IsNullOrEmpty(description), "A descrição do produto não pode ser vazia ou nula");
+            DomainValidationExeption.When((price <= 0), "Preço do produto inválido");
+            Name = name;
+            Description = description;
+            Price = price;
+            Enabled = enabled;
         }
+
     }
 }
