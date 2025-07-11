@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Entities;
+using Domain.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Vendas_Gest.Tests.Entities.Tests
@@ -13,19 +14,17 @@ namespace Vendas_Gest.Tests.Entities.Tests
         public ProductTests()
         {
             _validUser = new Product("Pura", "Agua mineral", 150, true);
-            _invalidUser = new Product("", "Agua mineral", 0, false);
         }
 
         [TestMethod]
         public void Dado_um_produto_invalido_o_mesmo_deve_retorar_erro()
         {
-            _invalidUser.Validate();
-            Assert.AreEqual(false,_invalidUser.Valid);
+            Assert.ThrowsException<DomainValidationExeption>(()=> new Product("", "Agua mineral", 150, true),"Erro ao criar o produto");
         }
         [TestMethod]
         public void Dado_um_produto_valido_o_mesmo_deve_ser_criado_com_sucesso()
         {
-            Assert.AreEqual(true, _validUser.Valid);
+            Assert.AreEqual(false, (_validUser is null));
         }
         [TestMethod]
         public void Dado_um_produto_valido_com_0_de_estoque_deve_incrementar_10()
@@ -36,8 +35,7 @@ namespace Vendas_Gest.Tests.Entities.Tests
         [TestMethod]
         public void Dado_um_produto_valido_ao_incrementar_valores_negativos_deve_retornar_erro()
         {
-            _validUser.AddStockQuantity(-10);
-            Assert.AreEqual(false, _validUser.Valid);
+            Assert.ThrowsException<DomainValidationExeption>(() => _validUser.AddStockQuantity(-10), "Erro ao adicionar quantidade de estoque do o produto");
         }
         [TestMethod]
         public void Dado_um_produto_valido_o_com_10_de_estoque_deve_decrementar_5()
@@ -50,8 +48,7 @@ namespace Vendas_Gest.Tests.Entities.Tests
         public void Dado_um_produto_valido_com_10_de_estoque_ao_decrementar_11_deve_retornar_erro()
         {
             _validUser.AddStockQuantity(10);
-            _validUser.SubtractStockQuantity(11);
-            Assert.AreEqual(false, _validUser.Valid);
+            Assert.ThrowsException<DomainValidationExeption>(() => _validUser.SubtractStockQuantity(11), "Erro ao subtrair quantidade de estoque do o produto");
         }
         [TestMethod]
         public void Dado_um_produto_habilitado_o_mesmo_deve_ser_inabilitado()

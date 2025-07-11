@@ -1,19 +1,19 @@
-﻿using Domain.Validators;
-using Flunt.Notifications;
-using Flunt.Validations;
+﻿using Domain.Validation;
 using System;
 
 namespace Domain.Entities
 {
-    public class SaleItem : Entity, IValidatable
+    public class SaleItem : Entity
     {
         public SaleItem(Cart cart, Product product)
         {
-            Cart = cart;
-            Product = product;
-            Quantity = 0;
-            Total = 0;
-            _saleItemValidator = new SaleItemValidator(this);
+            ValidateDomain(cart, product);
+        }
+        //Construtor para atualização
+        public SaleItem(Guid id, Cart cart, Product product)
+        {
+            ValidateDomain(cart, product);
+            Id = id;
         }
 
         public Cart Cart { get; private set; }
@@ -21,37 +21,27 @@ namespace Domain.Entities
         public int Quantity { get; private set; }
         public decimal Total { get; private set; }
 
-        private readonly SaleItemValidator _saleItemValidator;
-
         public void AddQuantity(int quantity)
         {
             Product.SubtractStockQuantity(quantity);
-            if (Product.Valid is false)
-                this.AddNotifications(Product.Notifications);
-            else
-            {
-                Quantity += quantity;
-                Total += (Product.Price * quantity);
-            }
+            Quantity += quantity;
+            Total += (Product.Price * quantity);
         }
         public void SubtractQuantity(int quantity)
         {
-            if (Product.Valid is false)
-                this.AddNotifications(Product.Notifications);
-            else if(quantity <= 0 || quantity > Quantity)
-                this.AddNotification(new Notification($"{quantity}","Não foi possível subtrair esta quantidade!"));
-            else
-            {
-                Product.AddStockQuantity(quantity);
-                Quantity -= quantity;
-                Total -= (Product.Price * quantity);
-            }
+            DomainValidationExeption.When((quantity <= 0 || quantity > Quantity), "Quantidade inválida");
+            Product.AddStockQuantity(quantity);
+            Quantity -= quantity;
+            Total -= (Product.Price * quantity);
         }
 
 
-        public void Validate()
+        public void ValidateDomain(Cart cart, Product product)
         {
-            _saleItemValidator.Validate();
+            DomainValidationExeption.When((cart is null), "Carrinho inválido");
+            DomainValidationExeption.When((product is null), "Produto inválido");
+            Cart = cart;
+            Product = product;
         }
     }
 }

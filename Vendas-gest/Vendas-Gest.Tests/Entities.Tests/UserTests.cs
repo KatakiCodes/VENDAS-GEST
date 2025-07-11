@@ -1,32 +1,29 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Validation;
 
 namespace Vendas_Gest.Tests.Entities.Tests
 {
     [TestClass]
     public class UserTests
     {
-        private readonly User _invalidUser;
         private readonly User _validUser;
         public UserTests()
         {
             _validUser = new User("Nelson Dos Santos", "123456", EUserRole.Administrator, true);
-            _invalidUser = new User(null, "12345", EUserRole.Administrator, true);
         }
 
         [TestMethod]
         public void Dados_um_utilizador_invalido_o_mesmo_deve_retornar_em_erro()
         {
-            _invalidUser.Validate();
-            Assert.AreEqual(false, _invalidUser.Valid);
+            Assert.ThrowsException<DomainValidationExeption>(() => new User(null, "12345", EUserRole.Administrator, true), "Erro ao criar o utilizador");
         }
 
         [TestMethod]
         public void Dados_um_utilizador_valido_o_mesmo_deve_ser_criado_com_sucesso()
         {
-           _validUser.Validate();
-            Assert.AreEqual(true, _validUser.Valid);
+            Assert.AreEqual(false, (_validUser is null));
         }
 
         [TestMethod]

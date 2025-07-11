@@ -1,20 +1,19 @@
-﻿
-using Domain.Validators;
-using Flunt.Notifications;
-using Flunt.Validations;
+﻿using Domain.Validation;
+using System;
 
 namespace Domain.Entities
 {
-    public class Product : Entity, IValidatable
+    public class Product : Entity
     {
         public Product(string name, string description, decimal price, bool enabled)
         {
-            Name = name;
-            Description = description;
-            Price = price;
-            StockQuantity = 0;
-            Enabled = enabled;
-            _productValidator = new ProductValidator(this);
+            ValidateDomain(name, description, price, enabled);
+        }
+        //Construto para atuaçização
+        public Product(Guid id, string name, string description, decimal price, bool enabled)
+        {
+            ValidateDomain(name, description, price, enabled);
+            Id = id;
         }
 
         public string Name { get; private set; }
@@ -23,24 +22,17 @@ namespace Domain.Entities
         public int StockQuantity { get; private set; }
         public bool Enabled { get; private set; }
 
-        private readonly ProductValidator _productValidator;
-
         public void AddStockQuantity(int quantity)
         {
-            if (quantity <= 0)
-                this.AddNotification(new Notification($"{quantity}", "Quantidade inválida"));
-            else
-                StockQuantity += quantity;
+            DomainValidationExeption.When((quantity <= 0), "Quantidade inválida");
+            StockQuantity += quantity;
         }
 
         public void SubtractStockQuantity(int quantity)
         {
-            if (quantity <= 0)
-                this.AddNotification(new Notification($"{quantity}", "Quantidade inválida!"));
-            else if (quantity > StockQuantity)
-                this.AddNotification(new Notification($"{quantity}", "Valor superior a quantidade em estoque!"));
-            else
-                StockQuantity -= quantity;
+            DomainValidationExeption.When((quantity <= 0), "Quantidade inválida");
+            DomainValidationExeption.When((quantity > StockQuantity), "Quantidade superior a quantidade em estoque");
+            StockQuantity -= quantity;
         }
 
         public void Enable()
@@ -53,9 +45,15 @@ namespace Domain.Entities
             Enabled = false;
         }
 
-        public void Validate()
+        public void ValidateDomain(string name, string description, decimal price, bool enabled)
         {
-            _productValidator.Validate();
+            DomainValidationExeption.When(string.IsNullOrEmpty(name), "O nome do produto não pode ser vazio ou nulo");
+            DomainValidationExeption.When(string.IsNullOrEmpty(description), "A descrição do produto não pode ser vazia ou nula");
+            DomainValidationExeption.When((price <= 0), "Preço do produto inválido");
+            Name = name;
+            Description = description;
+            Price = price;
+            Enabled = enabled;
         }
 
     }
